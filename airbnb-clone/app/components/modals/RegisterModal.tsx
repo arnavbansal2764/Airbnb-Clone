@@ -11,6 +11,7 @@ import Input from "../Inputs/Input";
 import toast from "react-hot-toast";
 import Button from "../Button";
 import { signIn } from "next-auth/react";
+import useLoginModal from "@/app/hooks/useLoginModal";
 const RegisterModal = () => {
     const registerModal = useRegisterModal();
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +28,11 @@ const RegisterModal = () => {
             password: ""
         }
     });
-
+    const loginModal = useLoginModal();
+    const toggle = useCallback(() => {
+        registerModal.onClose();
+        loginModal.onOpen();
+    }, [loginModal, registerModal])
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
         axios.post('/api/register', data)
@@ -52,7 +57,7 @@ const RegisterModal = () => {
             <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required/>
         </div>
     )
-
+    
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
             <hr />
@@ -61,7 +66,7 @@ const RegisterModal = () => {
             <div className="text-neutral-500 text-center mt-4 font-light ">
                 <div className="justify-center flex flex-row items-center gap-2">
                 <div>Already have an account ? </div>
-                <div className="text-neutral-800 cursor-pointer hover:underline " onClick={registerModal.onClose}>Log in</div>
+                <div className="text-neutral-800 cursor-pointer hover:underline " onClick={toggle}>Log in</div>
             </div>
             </div>
         </div>
